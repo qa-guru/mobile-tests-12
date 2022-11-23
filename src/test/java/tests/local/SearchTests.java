@@ -37,29 +37,29 @@ public class SearchTests extends TestBase {
                         .shouldHave(CollectionCondition.sizeGreaterThan(0)));
     }
     @Test
-    void onboardingTest() {
-        step("Checking first onboarding screen", () -> {
+    void onBoardingTest() {
+        step("Проверка первого экрана", () -> {
             checkTextAndPicture("The Free Encyclopedia\n" +
                     "…in over 300 languages");
             $(AppiumBy.id("org.wikipedia.alpha:id/fragment_onboarding_forward_button")).click();
         });
 
-        step("Checking second onboarding screen", () -> {
+        step("Проверка второго экрана", () -> {
             checkTextAndPicture("New ways to explore");
             $(AppiumBy.id("org.wikipedia.alpha:id/fragment_onboarding_forward_button")).click();
         });
 
-        step("Checking third onboarding screen", () -> {
+        step("Проверка третьего экрана", () -> {
             checkTextAndPicture("Reading lists with sync");
             $(AppiumBy.id("org.wikipedia.alpha:id/fragment_onboarding_forward_button")).click();
         });
 
-        step("Checking last onboarding screen", () -> {
+        step("Проверка четвертого экрана", () -> {
             checkTextAndPicture("Send anonymous data");
             $(AppiumBy.id("org.wikipedia.alpha:id/fragment_onboarding_done_button")).click();
         });
 
-        step("Checking onboarding is finished", () -> {
+        step("Проверка что онбордин завершен", () -> {
             $(AppiumBy.id("org.wikipedia.alpha:id/main_toolbar"))
                     .shouldBe(Condition.visible);
             $(AppiumBy.id("org.wikipedia.alpha:id/search_container"))
