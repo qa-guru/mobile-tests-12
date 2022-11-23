@@ -39,8 +39,7 @@ public class SearchTests extends TestBase {
     @Test
     void onBoardingTest() {
         step("Проверка первого экрана", () -> {
-            checkTextAndPicture("The Free Encyclopedia\n" +
-                    "…in over 300 languages");
+            checkTextAndPicture("The Free Encyclopedia …in over 300 languages");
             $(AppiumBy.id("org.wikipedia.alpha:id/fragment_onboarding_forward_button")).click();
         });
 
