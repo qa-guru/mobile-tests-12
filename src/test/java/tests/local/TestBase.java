@@ -1,23 +1,39 @@
 package tests.local;
 
+import static com.codeborne.selenide.Selenide.closeWebDriver;
+import static com.codeborne.selenide.Selenide.open;
+import static com.codeborne.selenide.logevents.SelenideLogger.addListener;
+import static helpers.Attach.sessionId;
+
 import com.codeborne.selenide.Configuration;
-import com.codeborne.selenide.Selenide;
-import drivers.BrowserstackMobileDriver;
-import drivers.LocalMobileDriver;
-import helpers.Attach;
-import io.qameta.allure.selenide.AllureSelenide;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 
-import static com.codeborne.selenide.Selenide.open;
-import static com.codeborne.selenide.logevents.SelenideLogger.addListener;
-import static io.qameta.allure.Allure.step;
+import drivers.BrowserstackMobileDriver;
+import drivers.LocalMobileDriver;
+import helpers.Attach;
+import io.qameta.allure.selenide.AllureSelenide;
 
 public class TestBase {
+    //    @BeforeAll
+//    public static void setup() {
+//        Configuration.browser = LocalMobileDriver.class.getName();
+//        Configuration.browserSize = null;
+//    }
     @BeforeAll
-    public static void setup() {
-        Configuration.browser = LocalMobileDriver.class.getName();
+    public static void setup() throws Exception{
+        String host = System.getProperty("env");
+        host = "real";
+        if (host.equals("browserstack")) {
+            Configuration.browser = BrowserstackMobileDriver.class.getName();
+        } else if (host.equals("local")) {
+            Configuration.browser = LocalMobileDriver.class.getName();
+        } else if (host.equals("real")) {
+            Configuration.browser = LocalMobileDriver.class.getName();
+
+        }
         Configuration.browserSize = null;
     }
 
@@ -30,9 +46,14 @@ public class TestBase {
 
     @AfterEach
     public void afterEach() {
+        if (System.getProperty("env").equals("browserstack")) {
         Attach.screenshotAs("Last screenshot");
         Attach.pageSource();
-
-        step("Close driver", Selenide::closeWebDriver);
+            String sessionId = sessionId();
+            closeWebDriver();
+            Attach.video(sessionId);
+        } else {
+            closeWebDriver();
+        }
     }
 }
