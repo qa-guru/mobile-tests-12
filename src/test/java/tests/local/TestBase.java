@@ -17,21 +17,19 @@ import helpers.Attach;
 import io.qameta.allure.selenide.AllureSelenide;
 
 public class TestBase {
-    //    @BeforeAll
-//    public static void setup() {
-//        Configuration.browser = LocalMobileDriver.class.getName();
-//        Configuration.browserSize = null;
-//    }
+
     @BeforeAll
-    public static void setup() throws Exception{
+    public static void setup(){
         String host = System.getProperty("env");
-        host = "real";
-        if (host.equals("browserstack")) {
-            Configuration.browser = BrowserstackMobileDriver.class.getName();
-        } else if (host.equals("local")) {
-            Configuration.browser = LocalMobileDriver.class.getName();
-        } else if (host.equals("real")) {
-            Configuration.browser = LocalMobileDriver.class.getName();
+        switch (host) {
+            case "browserstack":
+                Configuration.browser = BrowserstackMobileDriver.class.getName();
+                break;
+            case "local":
+                Configuration.browser = LocalMobileDriver.class.getName();
+                break;
+            default:
+                throw new RuntimeException("запуск на окружении" + host + "не настроен");
 
         }
         Configuration.browserSize = null;
@@ -46,14 +44,11 @@ public class TestBase {
 
     @AfterEach
     public void afterEach() {
-        if (System.getProperty("env").equals("browserstack")) {
         Attach.screenshotAs("Last screenshot");
         Attach.pageSource();
-            String sessionId = sessionId();
-            closeWebDriver();
-            Attach.video(sessionId);
-        } else {
-            closeWebDriver();
-        }
+        String sessionId = sessionId();
+        closeWebDriver();
+        Attach.video(sessionId);
+        closeWebDriver();
     }
 }
