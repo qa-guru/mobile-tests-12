@@ -1,23 +1,37 @@
 package tests.local;
 
+import static com.codeborne.selenide.Selenide.closeWebDriver;
+import static com.codeborne.selenide.Selenide.open;
+import static com.codeborne.selenide.logevents.SelenideLogger.addListener;
+import static helpers.Attach.sessionId;
+
 import com.codeborne.selenide.Configuration;
-import com.codeborne.selenide.Selenide;
-import drivers.BrowserstackMobileDriver;
-import drivers.LocalMobileDriver;
-import helpers.Attach;
-import io.qameta.allure.selenide.AllureSelenide;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 
-import static com.codeborne.selenide.Selenide.open;
-import static com.codeborne.selenide.logevents.SelenideLogger.addListener;
-import static io.qameta.allure.Allure.step;
+import drivers.BrowserstackMobileDriver;
+import drivers.LocalMobileDriver;
+import helpers.Attach;
+import io.qameta.allure.selenide.AllureSelenide;
 
 public class TestBase {
+
     @BeforeAll
-    public static void setup() {
-        Configuration.browser = LocalMobileDriver.class.getName();
+    public static void setup(){
+        String host = System.getProperty("env");
+        switch (host) {
+            case "browserstack":
+                Configuration.browser = BrowserstackMobileDriver.class.getName();
+                break;
+            case "local":
+                Configuration.browser = LocalMobileDriver.class.getName();
+                break;
+            default:
+                throw new RuntimeException("запуск на окружении" + host + "не настроен");
+
+        }
         Configuration.browserSize = null;
     }
 
@@ -32,7 +46,9 @@ public class TestBase {
     public void afterEach() {
         Attach.screenshotAs("Last screenshot");
         Attach.pageSource();
-
-        step("Close driver", Selenide::closeWebDriver);
+        String sessionId = sessionId();
+        closeWebDriver();
+        Attach.video(sessionId);
+        closeWebDriver();
     }
 }
